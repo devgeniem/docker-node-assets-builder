@@ -11,6 +11,10 @@ for dir in "$@"
 do
 
     # Go to directory
+    if [ ! -d $dir ]; then
+        echo "ERROR: $dir is not directory..."
+        continue
+    fi
     echo "Checking directory $dir"
     cd $dir
 
