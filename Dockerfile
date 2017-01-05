@@ -1,15 +1,33 @@
-FROM alpine:edge
+FROM debian:jessie
 MAINTAINER Onni Hakala - Geniem Oy. <onni.hakala@geniem.com>
 
-RUN cd /tmp/ && \
+RUN \
+       cd /tmp/ \
+    && apt-get update \
+    && apt-get -y --no-install-recommends install \
+        apt-transport-https \
+        curl \
+        ca-certificates \
+        git \
+        openssh-client \
+        python \
+        build-essential \
+    # Install new nodejs
+    && curl -sL https://deb.nodesource.com/setup_7.x | bash \
+    && apt-get -y --no-install-recommends install nodejs \
 
-    # Install dependencies and small amount of devtools
-    apk --update add wget curl bash less vim nano git openssh-client \
-    # Node and build tools
-    nodejs python build-base
+    # Install yarn
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+    && apt-get update \
+    && apt-get -y install yarn \
 
-# Symlink few scripts for easier usage
-RUN ln -s /build/node_modules/webpack/bin/webpack.js /usr/local/bin/webpack
+    && apt-get clean \
+    && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* /var/log/apt/* /var/log/*.log
+
+# Install node-sass and webpack globally
+RUN yarn global add node-sass webpack
 
 # Install custom helper for one command building
 COPY node_install_and_build_webpack.sh /usr/local/bin/node_install_and_build_webpack

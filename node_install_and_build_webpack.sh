@@ -18,16 +18,16 @@ do
     echo "Checking directory $dir"
     cd $dir
 
-    # Install npm
+    # Install packages with yarn
     if [ -f package.json ];
     then
-        echo "Running npm install..."
-        npm install
+        echo "Running yarn install..."
+        yarn install
     else
        echo "No package.json present, skipping..."
     fi
 
-    # Install npm
+    # Build webpack
     if [ -f ./node_modules/webpack/bin/webpack.js ];
     then
         # Run using included webpack
